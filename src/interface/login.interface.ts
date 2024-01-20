@@ -1,8 +1,6 @@
 /* eslint-disable */
 
-export interface User {
-    username: string;
+export interface Login {
     password: string;
     email: string;
   }
-  
