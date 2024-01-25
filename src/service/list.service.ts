@@ -16,11 +16,13 @@ interface ListRespose {
 interface ListDeleteResponse {
    message: string;
    status: HttpStatus;
+   list: any[];
 }
 
 interface updateResponse {
    message: string;
    status: HttpStatus;
+   list: any[];
 }
 
 @Injectable()
@@ -38,26 +40,28 @@ export class ListService {
     async deleteListItem(id: string): Promise<ListDeleteResponse> {
       try{
          const deleteResult = await this.listModel.findByIdAndDelete(id).exec();
+         const listData = await this.listModel.find().exec();
          if (deleteResult) {
-            return { message: 'List item deleted successfully', status: HttpStatus.OK };
+            return { message: 'List item deleted successfully', status: HttpStatus.OK, list: listData };
         } else {
-            return { message: 'List item not found', status: HttpStatus.NOT_FOUND };
+            return { message: 'List item not found', status: HttpStatus.NOT_FOUND, list: [] };
         }
       }catch(error) {
-         return { message: error, status: HttpStatus.INTERNAL_SERVER_ERROR };
+         return { message: error, status: HttpStatus.INTERNAL_SERVER_ERROR, list: [] };
       }
     }
 
     async updateListItem(id: string, list: ListDto) : Promise<updateResponse> {
      try{
       const updatedList = await this.listModel.findByIdAndUpdate(id, list, { new: true }).exec();
+      const listData = await this.listModel.find().exec();
       if (updatedList) {
-         return { message: 'List item updated successfully', status: HttpStatus.OK };
+         return { message: 'List item updated successfully', status: HttpStatus.OK, list: [listData] };
      } else {
-         return { message: 'List item not found', status: HttpStatus.NOT_FOUND };
+         return { message: 'List item not found', status: HttpStatus.NOT_FOUND, list: [] };
      }
      }catch(error) {
-      return { message: error, status: HttpStatus.INTERNAL_SERVER_ERROR };
+      return { message: error, status: HttpStatus.INTERNAL_SERVER_ERROR, list: [] };
      }
     }
 }
